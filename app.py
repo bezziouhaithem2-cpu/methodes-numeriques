@@ -9,16 +9,9 @@ from io import BytesIO, StringIO
 import datetime
 
 # ─────────────────────────────────────────────
-#  SMART NUMBER FORMATTER  (supprime les zéros inutiles)
+#  SMART NUMBER FORMATTER
 # ─────────────────────────────────────────────
 def smart_fmt(val, max_dec=8):
-    """
-    Formate un nombre en supprimant les zéros de queue.
-    1.000000  → '1'
-    1.500000  → '1.5'
-    1.540000  → '1.54'
-    0.000000  → '0'
-    """
     try:
         v = float(val)
         rounded = round(v, max_dec)
@@ -30,7 +23,6 @@ def smart_fmt(val, max_dec=8):
         return str(val)
 
 def smart_fmt_sci(val):
-    """Format scientifique propre pour les très petits nombres."""
     if val == 0:
         return "0"
     if abs(val) < 1e-4 or abs(val) > 1e6:
@@ -38,13 +30,13 @@ def smart_fmt_sci(val):
     return smart_fmt(val)
 
 # ─────────────────────────────────────────────
-#  TRADUCTIONS / TRANSLATIONS / الترجمات
+#  TRADUCTIONS
 # ─────────────────────────────────────────────
 LANG = {
     "fr": {
         "page_title": "Méthodes Numériques",
-        "app_title": "📐 Méthodes Numériques Interactives",
-        "app_subtitle": "Gauss-Jordan & Simpson 1/3 — Visualisation et analyse détaillée",
+        "app_title": "Méthodes_Numériques",
+        "app_subtitle": "Bienvenue ! 👋 &nbsp; Explorez <b>Gauss-Jordan</b> & <b>Simpson 1/3</b> — calculez, visualisez, apprenez. <em>Enjoy it 🚀</em>",
         "params": "⚙️ Paramètres",
         "method": "Méthode d'intégration",
         "methods": ["Gauss-Jordan", "Simpson 1/3"],
@@ -73,9 +65,9 @@ LANG = {
         "formula_title": "📐 Formule utilisée",
         "formula_simp": r"$\int_a^b f(x)\,dx \approx \frac{h}{3}\left[f(x_0)+4\sum_{\text{impair}}f(x_i)+2\sum_{\text{pair}}f(x_i)+f(x_n)\right]$",
         "download_title": "⬇️ Télécharger les résultats",
-        "download_txt": "📄 Télécharger en TXT",
-        "download_csv": "📊 Télécharger en CSV",
-        "download_pdf": "📕 Télécharger en PDF",
+        "download_txt": "📄 TXT",
+        "download_csv": "📊 CSV",
+        "download_pdf": "📕 PDF",
         "error_func": "Erreur dans la fonction saisie",
         "error_calc": "Erreur lors du calcul",
         "error_exact": "Impossible de calculer la valeur exacte.",
@@ -86,6 +78,92 @@ LANG = {
         "language": "🌐 Langue / Language / اللغة",
         "n_must_even": "⚠️ n doit être pair pour Simpson 1/3. n a été arrondi.",
         "exact_na": "N/A (valeur exacte non calculée)",
+        # Simpson new keys
+        "simp_intro_title": "📌 Objectif de la méthode",
+        "simp_intro_text": "La méthode de **Simpson 1/3** permet d'approximer numériquement l'intégrale définie :",
+        "simp_intro_sub": "en subdivisant [a, b] en **n** sous-intervalles (n pair) et en approchant f(x) par des paraboles.",
+        "simp_params_display": "📌 Paramètres du calcul",
+        "simp_h_label": "Pas h",
+        "btn_abs_error": "ℹ️ C'est quoi l'erreur absolue ?",
+        "btn_rel_error": "ℹ️ C'est quoi l'erreur relative ?",
+        "btn_convergence": "ℹ️ C'est quoi la convergence ?",
+        "explain_abs_error": """
+**Erreur Absolue — Définition & Importance**
+
+L'**erreur absolue** est la différence brute entre la valeur numérique calculée et la valeur exacte :
+
+$$E_{\\text{abs}} = |I_{\\text{num}} - I_{\\text{exact}}|$$
+
+**Comment la calculer ?**
+1. Calculer l'intégrale par Simpson 1/3 → $I_{\\text{num}}$
+2. Calculer la valeur exacte par intégration symbolique → $I_{\\text{exact}}$
+3. Faire la différence en valeur absolue
+
+**Pourquoi c'est important ?**
+- Mesure la **précision absolue** de l'approximation (en unités réelles)
+- Permet de savoir si l'erreur est acceptable pour votre application
+- Pour Simpson 1/3, l'erreur est bornée par : $|E| \\leq \\frac{(b-a)^5}{180 n^4} \\max |f^{(4)}(x)|$
+- Plus h est petit (n grand), plus l'erreur absolue diminue en O(h⁴)
+
+| Erreur absolue | Interprétation |
+|----------------|---------------|
+| < 10⁻⁶ | ✅ Excellente précision |
+| 10⁻⁶ – 10⁻³ | ✅ Bonne précision |
+| 10⁻³ – 10⁻¹ | ⚠️ Précision modérée |
+| > 10⁻¹ | ❌ Précision faible — augmenter n |
+""",
+        "explain_rel_error": """
+**Erreur Relative — Définition & Importance**
+
+L'**erreur relative** normalise l'erreur absolue par rapport à la valeur exacte :
+
+$$E_{\\text{rel}} = \\frac{|I_{\\text{num}} - I_{\\text{exact}}|}{|I_{\\text{exact}}|}$$
+
+**Comment la calculer ?**
+1. Calculer $E_{\\text{abs}} = |I_{\\text{num}} - I_{\\text{exact}}|$
+2. Diviser par $|I_{\\text{exact}}|$
+3. Multiplier par 100 pour obtenir un pourcentage (optionnel)
+
+**Pourquoi c'est important ?**
+- L'erreur absolue seule peut être trompeuse : 0.001 est excellent pour une intégrale ≈ 1000, mais mauvais pour une intégrale ≈ 0.001
+- L'erreur relative est **adimensionnelle** et permet la comparaison entre différentes fonctions
+- Très utile en ingénierie et en physique pour valider des modèles
+
+| Erreur relative | Interprétation |
+|----------------|---------------|
+| < 10⁻⁸ | ✅ Précision machine |
+| < 10⁻⁶ | ✅ Très haute précision |
+| < 10⁻³ | ✅ Bonne précision (0.1%) |
+| > 10⁻² | ⚠️ Précision faible — augmenter n |
+""",
+        "explain_convergence": """
+**Convergence — Définition & Importance**
+
+La **convergence** décrit comment l'erreur évolue quand on augmente le nombre de sous-intervalles n (ou diminue le pas h).
+
+**Pour Simpson 1/3 :**
+
+$$E \\sim C \\cdot h^4 = C \\cdot \\left(\\frac{b-a}{n}\\right)^4$$
+
+Cela signifie que si on **double n** (divise h par 2), l'erreur est divisée par **2⁴ = 16** !
+
+**Comment l'analyser ?**
+1. Calculer Simpson pour n = 2, 4, 6, ..., 50
+2. Tracer l'erreur en échelle log-log
+3. La pente de la droite correspond à l'**ordre de convergence**
+4. Pour Simpson 1/3 la pente théorique est **−4**
+
+**Pourquoi c'est important ?**
+- Permet de **choisir le n optimal** pour une précision cible
+- Valide que l'implémentation est correcte (ordre attendu = 4)
+- Détecte les fonctions problématiques (singularités, discontinuités)
+- En pratique : Simpson nécessite ~10× moins de sous-intervalles que la méthode des trapèzes (O(h²)) pour la même précision
+
+**Règle pratique :**
+Pour atteindre une précision de ε avec Simpson 1/3 :
+$$n \\geq \\left(\\frac{(b-a)^5 \\cdot M_4}{180 \\cdot \\varepsilon}\\right)^{1/4}$$
+où $M_4 = \\max |f^{(4)}(x)|$ sur [a, b].
+""",
         # Gauss-Jordan
         "gj_title": "🔢 Méthode de Gauss-Jordan",
         "gj_subtitle": "Résolution de systèmes linéaires Ax = b avec analyse complète étape par étape",
@@ -110,8 +188,7 @@ La **Forme Réduite Échelonnée par Lignes** (RREF) est la forme finale de la m
 - Ce **1** est le seul élément non nul dans sa colonne (tous les autres sont 0)
 - Les lignes nulles (si elles existent) sont en bas
 
-**Bénéfice principal :** La solution se lit **directement** dans la dernière colonne, sans aucune substitution arrière.  
-Exemple : si la 1ère ligne est `[1 0 0 | 5]`, alors directement **x₁ = 5**.
+**Bénéfice principal :** La solution se lit **directement** dans la dernière colonne, sans aucune substitution arrière.
 """,
         "gj_solution": "🎯 Solution du système",
         "gj_x": "x",
@@ -122,29 +199,23 @@ Exemple : si la 1ère ligne est `[1 0 0 | 5]`, alors directement **x₁ = 5**.
 
 Le **résidu** est défini par ‖Ax − b‖ (norme euclidienne de la différence).
 
-- Il mesure **à quel point** la solution calculée satisfait le système original.
-- **Résidu négligeable** (< 10⁻¹⁰) : la solution est numériquement exacte — les erreurs sont dues uniquement à l'arrondi machine (≈ 10⁻¹⁶).
-- **Résidu faible** (< 10⁻⁶) : bonne solution pour la plupart des applications pratiques.
-- **Résidu notable** (≥ 10⁻⁶) : attention — le système est peut-être mal conditionné ou la matrice quasi-singulière.
+- **Résidu négligeable** (< 10⁻¹⁰) : la solution est numériquement exacte.
+- **Résidu faible** (< 10⁻⁶) : bonne solution pour la plupart des applications.
+- **Résidu notable** (≥ 10⁻⁶) : le système est peut-être mal conditionné.
 """,
         "gj_det": "Déterminant de A",
-        "gj_rank": "Rang de la matrice",
-        "gj_cond": "Numéro de cond. κ",
+        "gj_rank": "Rang",
+        "gj_cond": "Cond. κ",
         "gj_cond_explain": """
-**Qu'est-ce que le numéro de conditionnement κ (kappa) ?**
+**Qu'est-ce que le numéro de conditionnement κ ?**
 
-Le **numéro de conditionnement** mesure la **sensibilité de la solution** aux petites perturbations des données (erreurs d'arrondi, bruit de mesure).
-
-- κ = σ_max / σ_min  (rapport des valeurs singulières extrêmes)
-- Plus κ est grand, plus le système est **instable numériquement**.
+κ = σ_max / σ_min — plus κ est grand, plus le système est instable numériquement.
 
 | Valeur de κ | Interprétation |
 |-------------|---------------|
-| κ < 100 | ✅ Bien conditionné — solution fiable |
-| 100 ≤ κ < 10⁶ | ⚠️ Modérément conditionné — prudence |
-| κ ≥ 10⁶ | ❌ Mal conditionné — solution potentiellement fausse |
-
-**Règle pratique :** On perd environ log₁₀(κ) chiffres significatifs dans la solution. Si κ = 10⁸ et la précision machine est 10⁻¹⁶, la solution n'aura que ~8 chiffres corrects.
+| κ < 100 | ✅ Bien conditionné |
+| 100 ≤ κ < 10⁶ | ⚠️ Modérément conditionné |
+| κ ≥ 10⁶ | ❌ Mal conditionné |
 """,
         "gj_unique": "Solution unique",
         "gj_no_solution": "❌ Système incompatible (pas de solution)",
@@ -152,27 +223,14 @@ Le **numéro de conditionnement** mesure la **sensibilité de la solution** aux 
         "gj_singular": "⚠️ Matrice singulière (det = 0)",
         "gj_about": "📘 À propos de la méthode de Gauss-Jordan",
         "gj_about_text": """
-**Gauss-Jordan** est une extension de l'élimination de Gauss qui réduit la matrice augmentée à sa **forme échelonnée réduite (RREF)**.
+**Gauss-Jordan** réduit la matrice augmentée à sa **forme échelonnée réduite (RREF)**.
 
 **Algorithme :**
 1. Former la matrice augmentée **[A|b]**
-2. Pour chaque colonne pivot :
-   - Sélectionner le pivot (max partiel pour stabilité numérique)
-   - Diviser la ligne pivot pour obtenir un 1 sur la diagonale
-   - Éliminer **toutes** les autres lignes (pas seulement en dessous)
+2. Pour chaque colonne pivot : sélectionner le pivot, normaliser, éliminer **toutes** les autres lignes
 3. Lire directement la solution dans la dernière colonne
 
-**Complexité :** O(n³) opérations
-
-**Avantages :**
-- Pas de substitution arrière nécessaire
-- Permet de calculer l'inverse d'une matrice
-- Détection automatique des systèmes incompatibles ou sous-déterminés
-
-**Indicateurs d'analyse :**
-- **Déterminant** : produit des pivots (avant normalisation)
-- **Rang** : nombre de lignes non nulles dans la RREF
-- **Conditionnement** : mesure la sensibilité de la solution aux perturbations
+**Complexité :** O(n³) — **Avantages :** pas de substitution arrière, détection automatique des systèmes incompatibles.
 """,
         "gj_formula": "Forme générale du système",
         "gj_col": "Colonne",
@@ -189,17 +247,18 @@ Le **numéro de conditionnement** mesure la **sensibilité de la solution** aux 
         "nav_gj": "🔢 Gauss-Jordan",
         "nav_simp": "∫ Simpson 1/3",
         "page_label": "Page active",
-        "gj_residual_negligible": "✅ Résidu négligeable — solution numériquement exacte",
+        "gj_residual_negligible": "✅ Résidu négligeable — solution exacte",
         "gj_residual_low": "ℹ️ Résidu faible — bonne précision",
         "gj_residual_high": "⚠️ Résidu notable — vérifiez le conditionnement",
         "gj_what_is_cond": "ℹ️ C'est quoi le numéro de conditionnement ?",
-        "gj_what_is_rref": "ℹ️ C'est quoi la RREF et ses bénéfices ?",
-        "gj_what_is_residual": "ℹ️ C'est quoi le résidu négligeable ?",
+        "gj_what_is_rref": "ℹ️ C'est quoi la RREF ?",
+        "gj_what_is_residual": "ℹ️ C'est quoi le résidu ?",
+        "gj_solution_direct": "🎯 Solution — x",
     },
     "en": {
         "page_title": "Numerical Methods",
-        "app_title": "📐 Interactive Numerical Methods",
-        "app_subtitle": "Gauss-Jordan & Simpson 1/3 — Visualization and detailed analysis",
+        "app_title": "Numerical_Methods",
+        "app_subtitle": "Welcome! 👋 &nbsp; Explore <b>Gauss-Jordan</b> & <b>Simpson 1/3</b> — compute, visualize, learn. <em>Enjoy it 🚀</em>",
         "params": "⚙️ Parameters",
         "method": "Method",
         "methods": ["Gauss-Jordan", "Simpson 1/3"],
@@ -228,9 +287,9 @@ Le **numéro de conditionnement** mesure la **sensibilité de la solution** aux 
         "formula_title": "📐 Formula used",
         "formula_simp": r"$\int_a^b f(x)\,dx \approx \frac{h}{3}\left[f(x_0)+4\sum_{\text{odd}}f(x_i)+2\sum_{\text{even}}f(x_i)+f(x_n)\right]$",
         "download_title": "⬇️ Download results",
-        "download_txt": "📄 Download as TXT",
-        "download_csv": "📊 Download as CSV",
-        "download_pdf": "📕 Download as PDF",
+        "download_txt": "📄 TXT",
+        "download_csv": "📊 CSV",
+        "download_pdf": "📕 PDF",
         "error_func": "Error in the entered function",
         "error_calc": "Calculation error",
         "error_exact": "Could not compute exact value.",
@@ -241,6 +300,77 @@ Le **numéro de conditionnement** mesure la **sensibilité de la solution** aux 
         "language": "🌐 Language / Langue / اللغة",
         "n_must_even": "⚠️ n must be even for Simpson 1/3. n was rounded.",
         "exact_na": "N/A (exact value not computed)",
+        "simp_intro_title": "📌 Method objective",
+        "simp_intro_text": "**Simpson's 1/3 Rule** numerically approximates the definite integral:",
+        "simp_intro_sub": "by splitting [a, b] into **n** sub-intervals (n even) and approximating f(x) with parabolas.",
+        "simp_params_display": "📌 Calculation parameters",
+        "simp_h_label": "Step h",
+        "btn_abs_error": "ℹ️ What is absolute error?",
+        "btn_rel_error": "ℹ️ What is relative error?",
+        "btn_convergence": "ℹ️ What is convergence?",
+        "explain_abs_error": """
+**Absolute Error — Definition & Importance**
+
+The **absolute error** is the raw difference between the numerical result and the exact value:
+
+$$E_{\\text{abs}} = |I_{\\text{num}} - I_{\\text{exact}}|$$
+
+**How to compute it?**
+1. Compute the integral using Simpson 1/3 → $I_{\\text{num}}$
+2. Compute the exact value via symbolic integration → $I_{\\text{exact}}$
+3. Take the absolute difference
+
+**Why does it matter?**
+- Measures the **absolute accuracy** of the approximation (in real units)
+- For Simpson 1/3: $|E| \\leq \\frac{(b-a)^5}{180 n^4} \\max |f^{(4)}(x)|$
+- Larger n → smaller h → error decreases as O(h⁴)
+
+| Absolute error | Interpretation |
+|----------------|---------------|
+| < 10⁻⁶ | ✅ Excellent |
+| 10⁻⁶ – 10⁻³ | ✅ Good |
+| 10⁻³ – 10⁻¹ | ⚠️ Moderate |
+| > 10⁻¹ | ❌ Poor — increase n |
+""",
+        "explain_rel_error": """
+**Relative Error — Definition & Importance**
+
+The **relative error** normalizes the absolute error with respect to the exact value:
+
+$$E_{\\text{rel}} = \\frac{|I_{\\text{num}} - I_{\\text{exact}}|}{|I_{\\text{exact}}|}$$
+
+**Why does it matter?**
+- 0.001 may be excellent for an integral ≈ 1000, but terrible for an integral ≈ 0.001
+- The relative error is **dimensionless** — allows fair comparison across functions
+- Essential in engineering and physics for model validation
+
+| Relative error | Interpretation |
+|----------------|---------------|
+| < 10⁻⁸ | ✅ Machine precision |
+| < 10⁻⁶ | ✅ Very high precision |
+| < 10⁻³ | ✅ Good (0.1%) |
+| > 10⁻² | ⚠️ Poor — increase n |
+""",
+        "explain_convergence": """
+**Convergence — Definition & Importance**
+
+**Convergence** describes how the error decreases as n increases (h decreases).
+
+**For Simpson 1/3:**
+
+$$E \\sim C \\cdot h^4 \\quad \\Rightarrow \\quad \\text{doubling } n \\text{ divides error by } 2^4 = 16$$
+
+**How to analyze it?**
+1. Compute Simpson for n = 2, 4, 6, ..., 50
+2. Plot error on log-log scale
+3. The slope corresponds to the **convergence order** (expected: −4 for Simpson)
+
+**Why does it matter?**
+- Lets you **choose the optimal n** for a target precision
+- Validates the implementation (expected order = 4)
+- Detects problematic functions (singularities, discontinuities)
+- Simpson needs ~10× fewer sub-intervals than trapezoidal rule for same accuracy
+""",
         "gj_title": "🔢 Gauss-Jordan Method",
         "gj_subtitle": "Solving linear systems Ax = b with full step-by-step analysis",
         "gj_size": "Matrix size (n×n)",
@@ -257,15 +387,11 @@ Le **numéro de conditionnement** mesure la **sensibilité de la solution** aux 
         "gj_rref_explain": """
 **What is RREF?**
 
-The **Reduced Row Echelon Form** (RREF) is the final form of the matrix after Gauss-Jordan elimination.
+The **Reduced Row Echelon Form** is the final form after Gauss-Jordan elimination.
 
-**Properties:**
-- Every non-zero row starts with a **1 (pivot/leading 1)**
-- That **1** is the only non-zero element in its column (all others are 0)
-- Zero rows (if any) are at the bottom
-
-**Main benefit:** The solution can be read **directly** from the last column — no back substitution needed.  
-Example: if the 1st row is `[1 0 0 | 5]`, then directly **x₁ = 5**.
+- Every non-zero row starts with a **1 (pivot)**
+- That **1** is the only non-zero element in its column
+- The solution is read **directly** from the last column — no back substitution needed.
 """,
         "gj_solution": "🎯 System solution",
         "gj_x": "x",
@@ -274,56 +400,39 @@ Example: if the 1st row is `[1 0 0 | 5]`, then directly **x₁ = 5**.
         "gj_residual_explain": """
 **What is the residual?**
 
-The **residual** is defined as ‖Ax − b‖ (Euclidean norm of the difference).
+‖Ax − b‖ measures how well the computed solution satisfies the original system.
 
-- It measures **how well** the computed solution satisfies the original system.
-- **Negligible residual** (< 10⁻¹⁰): numerically exact solution — errors are due only to machine rounding (≈ 10⁻¹⁶).
-- **Low residual** (< 10⁻⁶): good solution for most practical applications.
-- **Notable residual** (≥ 10⁻⁶): warning — the system may be ill-conditioned or the matrix nearly singular.
+- **Negligible** (< 10⁻¹⁰): numerically exact solution
+- **Low** (< 10⁻⁶): good for most applications
+- **Notable** (≥ 10⁻⁶): system may be ill-conditioned
 """,
-        "gj_det": "Determinant of A",
-        "gj_rank": "Matrix rank",
-        "gj_cond": "Cond. number κ",
+        "gj_det": "Determinant",
+        "gj_rank": "Rank",
+        "gj_cond": "Cond. κ",
         "gj_cond_explain": """
-**What is the condition number κ (kappa)?**
+**What is the condition number κ?**
 
-The **condition number** measures the **sensitivity of the solution** to small perturbations in the data (rounding errors, measurement noise).
-
-- κ = σ_max / σ_min  (ratio of extreme singular values)
-- The larger κ is, the more **numerically unstable** the system.
+κ = σ_max / σ_min — larger κ means more numerically unstable.
 
 | Value of κ | Interpretation |
 |------------|---------------|
-| κ < 100 | ✅ Well-conditioned — reliable solution |
-| 100 ≤ κ < 10⁶ | ⚠️ Moderately conditioned — be careful |
-| κ ≥ 10⁶ | ❌ Ill-conditioned — solution potentially unreliable |
-
-**Practical rule:** You lose about log₁₀(κ) significant digits in the solution. If κ = 10⁸ and machine precision is 10⁻¹⁶, the solution has only ~8 correct digits.
+| κ < 100 | ✅ Well-conditioned |
+| 100 ≤ κ < 10⁶ | ⚠️ Moderately conditioned |
+| κ ≥ 10⁶ | ❌ Ill-conditioned |
 """,
         "gj_unique": "Unique solution",
         "gj_no_solution": "❌ Inconsistent system (no solution)",
-        "gj_inf_solutions": "♾️ Infinitely many solutions (underdetermined system)",
+        "gj_inf_solutions": "♾️ Infinitely many solutions",
         "gj_singular": "⚠️ Singular matrix (det = 0)",
-        "gj_about": "📘 About the Gauss-Jordan method",
+        "gj_about": "📘 About Gauss-Jordan",
         "gj_about_text": """
-**Gauss-Jordan** is an extension of Gaussian elimination that reduces the augmented matrix to its **Reduced Row Echelon Form (RREF)**.
+**Gauss-Jordan** reduces the augmented matrix to its **RREF**.
 
-**Algorithm:**
-1. Form the augmented matrix **[A|b]**
-2. For each pivot column:
-   - Select the pivot (partial max for numerical stability)
-   - Divide the pivot row to get a 1 on the diagonal
-   - Eliminate **all** other rows (not just below)
-3. Read the solution directly from the last column
+**Algorithm:** Form [A|b] → select pivot (max partial) → normalize → eliminate all rows → read solution directly.
 
-**Complexity:** O(n³) operations
-
-**Advantages:**
-- No back substitution needed
-- Allows computing the matrix inverse
-- Automatic detection of inconsistent or underdetermined systems
+**Complexity:** O(n³)
 """,
-        "gj_formula": "General form of the system",
+        "gj_formula": "General form",
         "gj_col": "Column",
         "gj_swap": "Row swap",
         "gj_normalize": "Pivot normalization",
@@ -338,17 +447,18 @@ The **condition number** measures the **sensitivity of the solution** to small p
         "nav_gj": "🔢 Gauss-Jordan",
         "nav_simp": "∫ Simpson 1/3",
         "page_label": "Active page",
-        "gj_residual_negligible": "✅ Negligible residual — numerically exact solution",
+        "gj_residual_negligible": "✅ Negligible residual — exact solution",
         "gj_residual_low": "ℹ️ Low residual — good precision",
         "gj_residual_high": "⚠️ Notable residual — check conditioning",
         "gj_what_is_cond": "ℹ️ What is the condition number?",
-        "gj_what_is_rref": "ℹ️ What is RREF and its benefits?",
-        "gj_what_is_residual": "ℹ️ What is a negligible residual?",
+        "gj_what_is_rref": "ℹ️ What is RREF?",
+        "gj_what_is_residual": "ℹ️ What is the residual?",
+        "gj_solution_direct": "🎯 Solution — x",
     },
     "ar": {
         "page_title": "الطرق العددية",
-        "app_title": "📐 الطرق العددية التفاعلية",
-        "app_subtitle": "غاوس-جوردان و سيمبسون 1/3 — تصور وتحليل مفصل",
+        "app_title": "الطرق_العددية",
+        "app_subtitle": "أهلاً وسهلاً! 👋 &nbsp; استكشف <b>غاوس-جوردان</b> و <b>سيمبسون 1/3</b> — احسب، تصور، تعلّم. <em>Enjoy it 🚀</em>",
         "params": "⚙️ الإعدادات",
         "method": "الطريقة",
         "methods": ["غاوس-جوردان", "سيمبسون 1/3"],
@@ -377,9 +487,9 @@ The **condition number** measures the **sensitivity of the solution** to small p
         "formula_title": "📐 الصيغة المستخدمة",
         "formula_simp": r"$\int_a^b f(x)\,dx \approx \frac{h}{3}\left[f(x_0)+4\sum_{\text{فردي}}f(x_i)+2\sum_{\text{زوجي}}f(x_i)+f(x_n)\right]$",
         "download_title": "⬇️ تحميل النتائج",
-        "download_txt": "📄 تحميل كـ TXT",
-        "download_csv": "📊 تحميل كـ CSV",
-        "download_pdf": "📕 تحميل كـ PDF",
+        "download_txt": "📄 TXT",
+        "download_csv": "📊 CSV",
+        "download_pdf": "📕 PDF",
         "error_func": "خطأ في الدالة المدخلة",
         "error_calc": "خطأ في الحساب",
         "error_exact": "تعذّر حساب القيمة الدقيقة.",
@@ -390,6 +500,42 @@ The **condition number** measures the **sensitivity of the solution** to small p
         "language": "🌐 اللغة / Langue / Language",
         "n_must_even": "⚠️ يجب أن يكون n زوجياً لسيمبسون. تم تقريب n.",
         "exact_na": "غير متاح (القيمة الدقيقة لم تُحسب)",
+        "simp_intro_title": "📌 هدف الطريقة",
+        "simp_intro_text": "طريقة **سيمبسون 1/3** تُقدّر عددياً التكامل المحدد:",
+        "simp_intro_sub": "بتقسيم [a, b] إلى **n** جزء فرعي (n زوجي) وتقريب f(x) بمكافئات.",
+        "simp_params_display": "📌 معاملات الحساب",
+        "simp_h_label": "الخطوة h",
+        "btn_abs_error": "ℹ️ ما هو الخطأ المطلق؟",
+        "btn_rel_error": "ℹ️ ما هو الخطأ النسبي؟",
+        "btn_convergence": "ℹ️ ما هو التقارب؟",
+        "explain_abs_error": """
+**الخطأ المطلق — التعريف والأهمية**
+
+$$E_{\\text{abs}} = |I_{\\text{num}} - I_{\\text{exact}}|$$
+
+**كيف يُحسب؟**
+1. حساب التكامل بسيمبسون 1/3 → $I_{\\text{num}}$
+2. حساب القيمة الدقيقة → $I_{\\text{exact}}$
+3. أخذ القيمة المطلقة للفرق
+
+**لماذا مهم؟** يقيس الدقة الفعلية بوحدات حقيقية. لسيمبسون 1/3: $|E| \\leq \\frac{(b-a)^5}{180 n^4} \\max |f^{(4)}(x)|$
+""",
+        "explain_rel_error": """
+**الخطأ النسبي — التعريف والأهمية**
+
+$$E_{\\text{rel}} = \\frac{|I_{\\text{num}} - I_{\\text{exact}}|}{|I_{\\text{exact}}|}$$
+
+**لماذا مهم؟** الخطأ المطلق وحده قد يكون مضللاً — الخطأ النسبي بلا أبعاد ويسمح بالمقارنة بين دوال مختلفة. أساسي في الهندسة والفيزياء.
+""",
+        "explain_convergence": """
+**التقارب — التعريف والأهمية**
+
+$$E \\sim C \\cdot h^4 \\quad \\Rightarrow \\quad \\text{مضاعفة } n \\text{ تقسّم الخطأ على } 2^4 = 16$$
+
+**كيف يُحلَّل؟** حساب سيمبسون لـ n = 2, 4, ..., 50 ورسم الخطأ بمقياس لوغاريتمي. الميل النظري = −4.
+
+**لماذا مهم؟** يساعد على اختيار n المثلى، والتحقق من صحة التطبيق، واكتشاف الدوال الإشكالية.
+""",
         "gj_title": "🔢 طريقة غاوس-جوردان",
         "gj_subtitle": "حل الأنظمة الخطية Ax = b مع تحليل كامل خطوة بخطوة",
         "gj_size": "حجم المصفوفة (n×n)",
@@ -404,70 +550,49 @@ The **condition number** measures the **sensitivity of the solution** to small p
         "gj_matrix_after": "المصفوفة بعد العملية",
         "gj_rref": "✅ الصورة المختزلة للدرج (RREF)",
         "gj_rref_explain": """
-**ما هي RREF ؟**
+**ما هي RREF؟**
 
-**الصورة المختزلة للدرج** (RREF) هي الشكل النهائي للمصفوفة بعد حذف غاوس-جوردان.
-
-**الخصائص :**
-- كل صف غير صفري يبدأ بـ **1 (محور)**
-- هذا الـ **1** هو العنصر الوحيد غير الصفري في عمودِه (جميع العناصر الأخرى = 0)
-- الصفوف الصفرية (إن وُجدت) في الأسفل
-
-**الفائدة الرئيسية :** الحل يُقرأ **مباشرةً** من العمود الأخير بدون أي إحلال عكسي.  
-مثال: إذا كان الصف الأول `[1 0 0 | 5]` فمباشرةً **x₁ = 5**.
+الصورة النهائية للمصفوفة بعد حذف غاوس-جوردان. كل صف يبدأ بـ 1، وهو العنصر الوحيد غير الصفري في عموده. الحل يُقرأ مباشرة من العمود الأخير.
 """,
         "gj_solution": "🎯 حل النظام",
         "gj_x": "x",
         "gj_verification": "🔍 التحقق: A·x = b",
         "gj_residual": "البقايا ‖Ax − b‖",
         "gj_residual_explain": """
-**ما هو البقايا (Residual) ؟**
+**ما هو البقايا؟**
 
-**البقايا** يُعرَّف بـ ‖Ax − b‖ (المعيار الإقليدي للفرق).
-
-- يقيس **مدى دقة** الحل المحسوب في تحقيق النظام الأصلي.
-- **بقايا ضئيلة** (< 10⁻¹⁰) : الحل دقيق عددياً — الأخطاء ناتجة فقط عن تقريب الحاسوب (≈ 10⁻¹⁶).
-- **بقايا منخفضة** (< 10⁻⁶) : حل جيد لمعظم التطبيقات العملية.
-- **بقايا ملحوظة** (≥ 10⁻⁶) : تحذير — قد يكون النظام سيء التكييف أو المصفوفة شبه شاذة.
+‖Ax − b‖ يقيس مدى دقة الحل المحسوب.
+- ضئيلة (< 10⁻¹⁰): دقة عددية ممتازة
+- منخفضة (< 10⁻⁶): جيدة للتطبيقات العملية
+- ملحوظة (≥ 10⁻⁶): تحقق من التكييف
 """,
-        "gj_det": "محدد المصفوفة A",
-        "gj_rank": "رتبة المصفوفة",
+        "gj_det": "محدد A",
+        "gj_rank": "الرتبة",
         "gj_cond": "رقم الشرط κ",
         "gj_cond_explain": """
-**ما هو رقم الشرط κ (كابا) ؟**
+**ما هو رقم الشرط κ؟**
 
-**رقم الشرط** يقيس **حساسية الحل** للاضطرابات الصغيرة في البيانات (أخطاء التقريب، ضوضاء القياس).
-
-- κ = σ_max / σ_min  (نسبة القيم الشاذة القصوى)
-- كلما كان κ أكبر، كان النظام أكثر **عدم استقراراً عددياً**.
+κ = σ_max / σ_min — كلما كان أكبر، كان النظام أكثر عدم استقراراً.
 
 | قيمة κ | التفسير |
 |--------|---------|
-| κ < 100 | ✅ جيد التكييف — حل موثوق |
-| 100 ≤ κ < 10⁶ | ⚠️ متوسط التكييف — توخَّ الحذر |
-| κ ≥ 10⁶ | ❌ سيء التكييف — الحل قد يكون غير موثوق |
-
-**قاعدة عملية:** تفقد نحو log₁₀(κ) رقماً دقيقاً في الحل.
+| κ < 100 | ✅ جيد |
+| 100 ≤ κ < 10⁶ | ⚠️ متوسط |
+| κ ≥ 10⁶ | ❌ سيء |
 """,
         "gj_unique": "حل وحيد",
         "gj_no_solution": "❌ نظام غير متوافق (لا يوجد حل)",
-        "gj_inf_solutions": "♾️ حلول لا نهائية (نظام ناقص التحديد)",
+        "gj_inf_solutions": "♾️ حلول لا نهائية",
         "gj_singular": "⚠️ مصفوفة شاذة (det = 0)",
         "gj_about": "📘 حول طريقة غاوس-جوردان",
         "gj_about_text": """
-**غاوس-جوردان** امتداد لطريقة الحذف الغاوسي تختزل المصفوفة المعززة إلى **الصورة المختزلة للدرج (RREF)**.
+**غاوس-جوردان** تختزل المصفوفة المعززة إلى RREF.
 
-**الخوارزمية:**
-1. تشكيل المصفوفة المعززة **[A|b]**
-2. لكل عمود محوري:
-   - اختيار المحور (أقصى جزئي للاستقرار العددي)
-   - قسمة صف المحور للحصول على 1 في القطر
-   - حذف **جميع** الصفوف الأخرى
-3. قراءة الحل مباشرة من العمود الأخير
+**الخوارزمية:** تشكيل [A|b] ← اختيار المحور ← التطبيع ← الحذف ← قراءة الحل مباشرة.
 
-**التعقيد:** O(n³) عملية
+**التعقيد:** O(n³)
 """,
-        "gj_formula": "الصيغة العامة للنظام",
+        "gj_formula": "الصيغة العامة",
         "gj_col": "العمود",
         "gj_swap": "تبديل الصفوف",
         "gj_normalize": "تطبيع المحور",
@@ -482,12 +607,13 @@ The **condition number** measures the **sensitivity of the solution** to small p
         "nav_gj": "🔢 غاوس-جوردان",
         "nav_simp": "∫ سيمبسون 1/3",
         "page_label": "الصفحة النشطة",
-        "gj_residual_negligible": "✅ بقايا ضئيلة — الحل دقيق عددياً",
+        "gj_residual_negligible": "✅ بقايا ضئيلة — حل دقيق",
         "gj_residual_low": "ℹ️ بقايا منخفضة — دقة جيدة",
         "gj_residual_high": "⚠️ بقايا ملحوظة — تحقق من التكييف",
         "gj_what_is_cond": "ℹ️ ما هو رقم الشرط؟",
-        "gj_what_is_rref": "ℹ️ ما هي RREF وفوائدها؟",
-        "gj_what_is_residual": "ℹ️ ما معنى البقايا الضئيلة؟",
+        "gj_what_is_rref": "ℹ️ ما هي RREF؟",
+        "gj_what_is_residual": "ℹ️ ما معنى البقايا؟",
+        "gj_solution_direct": "🎯 الحل — x",
     }
 }
 
@@ -501,80 +627,224 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  CUSTOM CSS
+#  CUSTOM CSS  — New color palette: dark navy + cyan/teal accents
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
+/* ── Base ── */
 html, body, [class*="css"] {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
+    background-color: #070d1a;
 }
 h1, h2, h3 {
     font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: -0.03em;
 }
+
+/* ── Terminal Title ── */
+.terminal-wrap {
+    padding: 2rem 0 0.5rem 0;
+}
+.terminal-prefix {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.05rem;
+    color: #10b981;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.15rem;
+}
+.terminal-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2.4rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #06b6d4 0%, #10b981 60%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin: 0;
+}
+.terminal-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 2.2rem;
+    background: #06b6d4;
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink-cursor 1s step-end infinite;
+}
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+.terminal-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.0rem;
+    color: #94a3b8;
+    margin-top: 0.6rem;
+    letter-spacing: 0.01em;
+}
+.terminal-subtitle b {
+    color: #06b6d4;
+}
+
+/* ── Nav buttons ── */
 .stButton > button {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: #e2e8f0;
-    border: 1px solid #4a90d9;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #0a1628 0%, #0f2040 100%);
+    color: #cbd5e1;
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
     font-family: 'IBM Plex Mono', monospace;
     font-weight: 600;
-    letter-spacing: 0.04em;
-    padding: 0.6em 1.4em;
-    transition: all 0.2s ease;
+    font-size: 0.88rem;
+    letter-spacing: 0.03em;
+    padding: 0.55em 1.3em;
+    transition: all 0.22s ease;
 }
 .stButton > button:hover {
-    background: #4a90d9;
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
     color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(74,144,217,0.4);
+    border-color: #06b6d4;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(6,182,212,0.35);
 }
-.metric-box {
-    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-    border: 1px solid #4a90d933;
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    color: #fff;
+    border-color: #06b6d4;
+    box-shadow: 0 4px 14px rgba(6,182,212,0.3);
+}
+.stButton > button[kind="primary"]:hover {
+    background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+    box-shadow: 0 6px 22px rgba(6,182,212,0.5);
+}
+
+/* ── Metrics ── */
+[data-testid="metric-container"] {
+    background: linear-gradient(135deg, #0a1628 0%, #0f2040 100%);
+    border: 1px solid #1e3a5f;
     border-radius: 10px;
-    padding: 1rem 1.4rem;
-    margin: 0.5rem 0;
+    padding: 0.9rem 1.1rem;
 }
-.stMetric label { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; }
-div[data-testid="stExpander"] { border: 1px solid #4a90d922; border-radius: 8px; }
-.block-container { padding-top: 2rem; }
-.matrix-step {
-    background: #0d1b2a;
-    border: 1px solid #4a90d933;
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 0.5rem 0;
+[data-testid="metric-container"]:hover {
+    border-color: #06b6d4;
+    box-shadow: 0 0 14px rgba(6,182,212,0.15);
+}
+[data-testid="stMetricLabel"] {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 0.72rem;
+    color: #64748b !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+[data-testid="stMetricValue"] {
+    font-family: 'IBM Plex Mono', monospace;
+    color: #06b6d4 !important;
+    font-size: 1.3rem !important;
+}
+
+/* ── Expanders ── */
+div[data-testid="stExpander"] {
+    border: 1px solid #1e3a5f;
+    border-radius: 10px;
+    background: #0a1628;
+    transition: border-color 0.2s;
+}
+div[data-testid="stExpander"]:hover {
+    border-color: #06b6d466;
+}
+div[data-testid="stExpander"] summary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.88rem;
+    color: #94a3b8;
+}
+
+/* ── Cards / boxes ── */
+.info-banner {
+    background: linear-gradient(135deg, #0a1e38 0%, #0c2340 100%);
+    border: 1px solid #06b6d433;
+    border-left: 4px solid #06b6d4;
+    border-radius: 10px;
+    padding: 1.1rem 1.4rem;
+    margin: 0.8rem 0 1.2rem 0;
+}
+.param-card {
+    background: linear-gradient(135deg, #080f1e 0%, #0a1628 100%);
+    border: 1px solid #1e3a5f;
+    border-radius: 10px;
+    padding: 0.9rem 1.2rem;
+    margin: 0.3rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.88rem;
+}
+.solution-card {
+    background: linear-gradient(135deg, #051a12, #0a1628);
+    border: 1px solid #10b981;
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    margin: 1rem 0;
+    box-shadow: 0 0 20px rgba(16,185,129,0.12);
+}
+.solution-card h3 {
+    color: #10b981;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.05em;
 }
 .step-badge {
     display: inline-block;
-    background: #4a90d9;
+    background: #0891b2;
     color: white;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.75rem;
+    border-radius: 5px;
+    padding: 2px 9px;
+    font-size: 0.72rem;
     font-family: 'IBM Plex Mono', monospace;
     margin-bottom: 0.5rem;
+    letter-spacing: 0.04em;
 }
-.solution-box {
-    background: linear-gradient(135deg, #0a2e1a, #0d1b2a);
-    border: 1px solid #2ecc71;
-    border-radius: 10px;
-    padding: 1.2rem;
-    margin: 0.5rem 0;
-}
-.explain-box {
-    background: linear-gradient(135deg, #0d1b2a, #0f2040);
-    border: 1px solid #4a90d955;
+.matrix-display {
+    background: #070d1a;
+    border: 1px solid #1e3a5f;
     border-radius: 8px;
-    padding: 0.8rem 1rem;
+    padding: 0.9rem;
     margin: 0.4rem 0;
-    font-size: 0.88rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.83rem;
 }
+.divider-accent {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #06b6d4, transparent);
+    margin: 1.5rem 0;
+    border: none;
+}
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #070d1a 0%, #0a1628 100%);
+    border-right: 1px solid #1e3a5f;
+}
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stRadio label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stCheckbox label {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* ── Alerts ── */
+.stSuccess { border-left-color: #10b981 !important; }
+.stWarning { border-left-color: #f59e0b !important; }
+.stError   { border-left-color: #ef4444 !important; }
+.stInfo    { border-left-color: #06b6d4 !important; }
+
+/* ── DataFrames ── */
+[data-testid="stDataFrame"] {
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+}
+.block-container { padding-top: 1rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -596,14 +866,21 @@ with st.sidebar:
 T = LANG[lang_choice]
 
 if lang_choice == "ar":
-    st.markdown('<style>body, .stMarkdown, .stText { direction: rtl; text-align: right; }</style>', unsafe_allow_html=True)
+    st.markdown('<style>body, .stMarkdown, .stText { direction: rtl; text-align: right; }</style>',
+                unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  HEADER
+#  HEADER — Terminal / keyboard typing style
 # ─────────────────────────────────────────────
-st.title(T["app_title"])
-st.caption(T["app_subtitle"])
-st.divider()
+st.markdown(f"""
+<div class="terminal-wrap">
+    <div class="terminal-prefix">&lt;/&gt; Python Programming &nbsp;·&nbsp; ZMHY</div>
+    <div class="terminal-title">{T["app_title"]}<span class="terminal-cursor"></span></div>
+    <div class="terminal-subtitle">{T["app_subtitle"]}</div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  NAVIGATION
@@ -620,25 +897,22 @@ with nav_col2:
         st.session_state["page"] = "simp"
         st.rerun()
 
-st.divider()
+st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
 
 # ═══════════════════════════════════════════════════════════════════════
 #  MATH HELPERS — GAUSS-JORDAN
 # ═══════════════════════════════════════════════════════════════════════
 
 def fmt_matrix(M, highlight_col=None, n_cols=None):
-    """Return a nicely formatted augmented matrix as HTML table."""
     rows, cols = M.shape
     sep_col = n_cols
-
     html = '<table style="border-collapse:collapse;font-family:IBM Plex Mono,monospace;font-size:0.82rem;margin:0.4rem 0;">'
     for i in range(rows):
         html += "<tr>"
         for j in range(cols):
-            border_left = "border-left:2px solid #4a90d9;" if (sep_col is not None and j == sep_col) else ""
-            bg = "background:#4a90d922;" if (highlight_col is not None and j == highlight_col) else ""
+            border_left = "border-left:2px solid #06b6d4;" if (sep_col is not None and j == sep_col) else ""
+            bg = "background:#06b6d415;" if (highlight_col is not None and j == highlight_col) else ""
             val = M[i, j]
-            # Clean display: remove trailing zeros
             rounded = round(val, 6)
             if abs(rounded) < 1e-9:
                 txt = "0"
@@ -649,7 +923,8 @@ def fmt_matrix(M, highlight_col=None, n_cols=None):
                 if s.endswith('.') or s.endswith('+') or s.endswith('-'):
                     s += '0'
                 txt = s
-            html += f'<td style="padding:3px 10px;{border_left}{bg}color:#e2e8f0;min-width:70px;text-align:right;">{txt}</td>'
+            html += (f'<td style="padding:4px 12px;{border_left}{bg}color:#e2e8f0;'
+                     f'min-width:70px;text-align:right;border-bottom:1px solid #1e3a5f;">{txt}</td>')
         html += "</tr>"
     html += "</table>"
     return html
@@ -658,7 +933,6 @@ def fmt_matrix(M, highlight_col=None, n_cols=None):
 def gauss_jordan_detailed(A_orig, b_orig):
     n = len(b_orig)
     Aug = np.hstack([A_orig.copy().astype(float), b_orig.copy().reshape(-1, 1).astype(float)])
-
     steps = []
     det_sign = 1
     pivot_row = 0
@@ -667,29 +941,16 @@ def gauss_jordan_detailed(A_orig, b_orig):
         max_row = pivot_row + np.argmax(np.abs(Aug[pivot_row:, col]))
         if abs(Aug[max_row, col]) < 1e-12:
             continue
-
         if max_row != pivot_row:
             Aug[[pivot_row, max_row]] = Aug[[max_row, pivot_row]]
             det_sign *= -1
-            steps.append({
-                "type": "swap",
-                "col": col,
-                "pivot_row": pivot_row,
-                "desc": f"R{pivot_row+1} ↔ R{max_row+1}",
-                "matrix": Aug.copy(),
-            })
-
+            steps.append({"type": "swap", "col": col, "pivot_row": pivot_row,
+                           "desc": f"R{pivot_row+1} ↔ R{max_row+1}", "matrix": Aug.copy()})
         pivot_val = Aug[pivot_row, col]
         Aug[pivot_row] = Aug[pivot_row] / pivot_val
-        steps.append({
-            "type": "normalize",
-            "col": col,
-            "pivot_row": pivot_row,
-            "desc": f"R{pivot_row+1} ← R{pivot_row+1} / ({smart_fmt(pivot_val)})",
-            "matrix": Aug.copy(),
-            "pivot_val": pivot_val,
-        })
-
+        steps.append({"type": "normalize", "col": col, "pivot_row": pivot_row,
+                       "desc": f"R{pivot_row+1} ← R{pivot_row+1} / ({smart_fmt(pivot_val)})",
+                       "matrix": Aug.copy(), "pivot_val": pivot_val})
         for row in range(n):
             if row == pivot_row:
                 continue
@@ -697,26 +958,17 @@ def gauss_jordan_detailed(A_orig, b_orig):
             if abs(factor) < 1e-12:
                 continue
             Aug[row] = Aug[row] - factor * Aug[pivot_row]
-            steps.append({
-                "type": "eliminate",
-                "col": col,
-                "target_row": row,
-                "pivot_row": pivot_row,
-                "desc": f"R{row+1} ← R{row+1} − ({smart_fmt(factor)})·R{pivot_row+1}",
-                "matrix": Aug.copy(),
-                "factor": factor,
-            })
-
+            steps.append({"type": "eliminate", "col": col, "target_row": row, "pivot_row": pivot_row,
+                           "desc": f"R{row+1} ← R{row+1} − ({smart_fmt(factor)})·R{pivot_row+1}",
+                           "matrix": Aug.copy(), "factor": factor})
         pivot_row += 1
 
     rref = Aug.copy()
     rank = sum(1 for i in range(n) if np.any(np.abs(rref[i, :n]) > 1e-10))
-
     try:
         det = float(np.linalg.det(A_orig.astype(float)))
     except Exception:
         det = None
-
     try:
         cond = float(np.linalg.cond(A_orig.astype(float)))
     except Exception:
@@ -724,7 +976,6 @@ def gauss_jordan_detailed(A_orig, b_orig):
 
     status = "unique"
     solution = None
-
     if rank < n:
         for i in range(rank, n):
             if abs(rref[i, n]) > 1e-10:
@@ -807,7 +1058,8 @@ def make_txt_simp(func_str, a, b, n, result, exact_val, x_vals, y_vals):
     buf.write("=" * 52 + "\n\n")
     buf.write(f"  Fonction        : f(x) = {func_str}\n")
     buf.write(f"  Intervalle      : [{a}, {b}]\n")
-    buf.write(f"  Sous-intervalles: n = {n}\n\n")
+    buf.write(f"  Sous-intervalles: n = {n}\n")
+    buf.write(f"  Pas h           : {(b-a)/n:.8f}\n\n")
     buf.write(f"  Résultat num.   : {result:.12f}\n")
     if exact_val is not None:
         buf.write(f"  Valeur exacte   : {exact_val:.12f}\n")
@@ -873,20 +1125,16 @@ def make_csv_gj(solution, A, b_vec):
     return pd.DataFrame(rows).to_csv(index=False).encode("utf-8")
 
 def make_pdf_gj(n_size, A, b_vec, solution, steps, det, rank, cond, rref, fig_sol=None):
-    """Generate a PDF report for Gauss-Jordan results."""
     try:
         from fpdf import FPDF
     except ImportError:
         return None
-
     pdf = FPDF()
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
-
-    # ── Header ──────────────────────────────────────────────────────
     pdf.set_font("Helvetica", "B", 16)
-    pdf.set_fill_color(15, 52, 96)
-    pdf.set_text_color(255, 255, 255)
+    pdf.set_fill_color(7, 13, 26)
+    pdf.set_text_color(6, 182, 212)
     pdf.rect(0, 0, 210, 28, 'F')
     pdf.set_xy(10, 8)
     pdf.cell(0, 12, "Rapport Gauss-Jordan", ln=True)
@@ -895,17 +1143,13 @@ def make_pdf_gj(n_size, A, b_vec, solution, steps, det, rank, cond, rref, fig_so
     pdf.set_xy(10, 32)
     pdf.cell(0, 6, f"Date : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True)
     pdf.ln(4)
-
-    # ── System parameters ────────────────────────────────────────────
     pdf.set_font("Helvetica", "B", 12)
-    pdf.set_fill_color(230, 240, 255)
-    pdf.set_text_color(15, 52, 96)
+    pdf.set_fill_color(10, 22, 40)
+    pdf.set_text_color(6, 182, 212)
     pdf.cell(0, 8, f"  Systeme lineaire {n_size}x{n_size}", ln=True, fill=True)
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(30, 30, 30)
     pdf.ln(2)
-
-    # Matrix A
     pdf.set_font("Helvetica", "B", 10)
     pdf.cell(0, 6, "  Matrice A :", ln=True)
     pdf.set_font("Courier", "", 9)
@@ -916,11 +1160,9 @@ def make_pdf_gj(n_size, A, b_vec, solution, steps, det, rank, cond, rref, fig_so
             pdf.cell(col_w, 6, f"{smart_fmt(A[i,j]):>8}", border=1)
         pdf.cell(10, 6, f" | {smart_fmt(b_vec[i])}", ln=True)
     pdf.ln(4)
-
-    # ── Analysis indicators ──────────────────────────────────────────
     pdf.set_font("Helvetica", "B", 12)
-    pdf.set_fill_color(230, 240, 255)
-    pdf.set_text_color(15, 52, 96)
+    pdf.set_fill_color(10, 22, 40)
+    pdf.set_text_color(6, 182, 212)
     pdf.cell(0, 8, "  Indicateurs d'analyse", ln=True, fill=True)
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(30, 30, 30)
@@ -937,12 +1179,10 @@ def make_pdf_gj(n_size, A, b_vec, solution, steps, det, rank, cond, rref, fig_so
         pdf.cell(0, 7, val, border="B", ln=True)
         pdf.set_font("Helvetica", "", 10)
     pdf.ln(4)
-
-    # ── Solution ─────────────────────────────────────────────────────
     if solution is not None:
         pdf.set_font("Helvetica", "B", 12)
-        pdf.set_fill_color(20, 80, 40)
-        pdf.set_text_color(255, 255, 255)
+        pdf.set_fill_color(5, 26, 18)
+        pdf.set_text_color(16, 185, 129)
         pdf.cell(0, 8, "  Solution du systeme", ln=True, fill=True)
         pdf.set_font("Courier", "B", 11)
         pdf.set_text_color(30, 30, 30)
@@ -951,24 +1191,19 @@ def make_pdf_gj(n_size, A, b_vec, solution, steps, det, rank, cond, rref, fig_so
             pdf.set_x(20)
             pdf.cell(0, 7, f"x{i+1}  =  {smart_fmt(xi)}", ln=True)
         pdf.ln(4)
-
-        # ── Verification table ───────────────────────────────────────
         pdf.set_font("Helvetica", "B", 12)
-        pdf.set_fill_color(230, 240, 255)
-        pdf.set_text_color(15, 52, 96)
+        pdf.set_fill_color(10, 22, 40)
+        pdf.set_text_color(6, 182, 212)
         pdf.cell(0, 8, "  Verification : A.x = b", ln=True, fill=True)
         pdf.set_text_color(30, 30, 30)
         pdf.ln(2)
         ax = A @ solution
         residual = np.linalg.norm(ax - b_vec)
-
-        # Table header
         pdf.set_font("Helvetica", "B", 9)
         pdf.set_fill_color(200, 220, 255)
         for header in ["Equation", "A.x_i", "b_i", "|A.x_i - b_i|"]:
             pdf.cell(45, 6, header, border=1, fill=True)
         pdf.ln()
-
         pdf.set_font("Courier", "", 9)
         for i in range(n_size):
             diff = abs(ax[i] - b_vec[i])
@@ -980,20 +1215,16 @@ def make_pdf_gj(n_size, A, b_vec, solution, steps, det, rank, cond, rref, fig_so
         pdf.ln(3)
         pdf.set_font("Helvetica", "B", 10)
         pdf.cell(0, 7, f"  Residu global ||Ax - b|| = {residual:.4e}", ln=True)
-        pdf.ln(4)
-
-        # ── Solution chart ───────────────────────────────────────────
         if fig_sol is not None:
             img_buf = BytesIO()
             fig_sol.savefig(img_buf, format="png", dpi=110, bbox_inches="tight")
             img_buf.seek(0)
             pdf.add_page()
             pdf.set_font("Helvetica", "B", 12)
-            pdf.set_fill_color(230, 240, 255)
-            pdf.set_text_color(15, 52, 96)
+            pdf.set_fill_color(10, 22, 40)
+            pdf.set_text_color(6, 182, 212)
             pdf.cell(0, 8, "  Graphique de la solution", ln=True, fill=True)
             pdf.image(img_buf, x=10, w=190)
-
     return bytes(pdf.output())
 
 
@@ -1006,8 +1237,8 @@ def make_pdf_simp(func_str, a, b, n, result, exact_val, fig=None):
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.set_font("Helvetica", "B", 16)
-    pdf.set_fill_color(15, 52, 96)
-    pdf.set_text_color(255, 255, 255)
+    pdf.set_fill_color(7, 13, 26)
+    pdf.set_text_color(6, 182, 212)
     pdf.rect(0, 0, 210, 28, 'F')
     pdf.set_xy(10, 8)
     pdf.cell(0, 12, "Rapport Simpson 1/3", ln=True)
@@ -1017,18 +1248,20 @@ def make_pdf_simp(func_str, a, b, n, result, exact_val, fig=None):
     pdf.cell(0, 6, f"Date : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True)
     pdf.ln(4)
     pdf.set_font("Helvetica", "B", 12)
-    pdf.set_fill_color(230, 240, 255)
-    pdf.set_text_color(15, 52, 96)
+    pdf.set_fill_color(10, 22, 40)
+    pdf.set_text_color(6, 182, 212)
     pdf.cell(0, 8, "  Parametres", ln=True, fill=True)
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(30, 30, 30)
-    for label, val in [("Fonction", f"f(x) = {func_str}"), ("Intervalle", f"[{a}, {b}]"), ("n", str(n))]:
+    h_val = (b - a) / n
+    for label, val in [("Fonction", f"f(x) = {func_str}"), ("Intervalle", f"[{a}, {b}]"),
+                        ("n", str(n)), ("h = (b-a)/n", f"{h_val:.8f}")]:
         pdf.cell(55, 7, f"  {label}", border="B")
         pdf.cell(0, 7, val, border="B", ln=True)
     pdf.ln(6)
     pdf.set_font("Helvetica", "B", 12)
-    pdf.set_fill_color(230, 240, 255)
-    pdf.set_text_color(15, 52, 96)
+    pdf.set_fill_color(10, 22, 40)
+    pdf.set_text_color(6, 182, 212)
     pdf.cell(0, 8, "  Resultats", ln=True, fill=True)
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(30, 30, 30)
@@ -1039,7 +1272,9 @@ def make_pdf_simp(func_str, a, b, n, result, exact_val, fig=None):
         abs_err = abs(result - exact_val)
         rel_err = abs_err / abs(exact_val) if exact_val != 0 else float("inf")
         pdf.set_font("Helvetica", "", 10)
-        for label, val in [("Valeur exacte", f"{exact_val:.12f}"), ("Erreur absolue", f"{abs_err:.4e}"), ("Erreur relative", f"{rel_err:.4e}")]:
+        for label, val in [("Valeur exacte", f"{exact_val:.12f}"),
+                            ("Erreur absolue", f"{abs_err:.4e}"),
+                            ("Erreur relative", f"{rel_err:.4e}")]:
             pdf.cell(55, 7, f"  {label}")
             pdf.cell(0, 7, val, ln=True)
     if fig is not None:
@@ -1048,8 +1283,8 @@ def make_pdf_simp(func_str, a, b, n, result, exact_val, fig=None):
         img_buf.seek(0)
         pdf.ln(8)
         pdf.set_font("Helvetica", "B", 12)
-        pdf.set_fill_color(230, 240, 255)
-        pdf.set_text_color(15, 52, 96)
+        pdf.set_fill_color(10, 22, 40)
+        pdf.set_text_color(6, 182, 212)
         pdf.cell(0, 8, "  Graphique", ln=True, fill=True)
         pdf.image(img_buf, x=10, w=190)
     return bytes(pdf.output())
@@ -1081,12 +1316,10 @@ if st.session_state["page"] == "gj":
         \end{pmatrix}
         """)
 
-    # ── Sidebar parameters ───────────────────────────────────────────
     with st.sidebar:
         st.subheader(T["params"])
         n_size = st.slider(T["gj_size"], min_value=2, max_value=6, value=3)
 
-    # ── Matrix A input ───────────────────────────────────────────────
     st.subheader(T["gj_matrix_a"])
     st.caption(T["gj_enter_a"])
 
@@ -1104,7 +1337,9 @@ if st.session_state["page"] == "gj":
 
     cols_header = st.columns(n_size)
     for j in range(n_size):
-        cols_header[j].markdown(f"<center>**x{j+1}**</center>", unsafe_allow_html=True)
+        cols_header[j].markdown(
+            f'<div style="text-align:center;font-family:IBM Plex Mono;color:#06b6d4;font-size:0.85rem;">x{j+1}</div>',
+            unsafe_allow_html=True)
 
     for i in range(n_size):
         row_cols = st.columns(n_size)
@@ -1137,7 +1372,7 @@ if st.session_state["page"] == "gj":
     if run_gj:
         solution, steps, rref, det, rank, cond, status = gauss_jordan_detailed(A_input, b_input)
 
-        st.divider()
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
 
         # ── Analysis cards ───────────────────────────────────────────
         c1, c2, c3, c4 = st.columns(4)
@@ -1146,78 +1381,45 @@ if st.session_state["page"] == "gj":
         c3.metric(T["gj_cond"], f"{cond:.3e}" if cond is not None else "N/A")
         c4.metric(T["gj_unique"], "✅" if status == "unique" else "❌")
 
-        # Condition number status + explanation
         if cond is not None:
             if cond < 100:
                 st.success(f"✅ Système bien conditionné (κ = {cond:.2f} < 100)")
             elif cond < 1e6:
                 st.warning(f"⚠️ Système modérément conditionné (κ = {cond:.2e})")
             else:
-                st.error(f"❌ Système mal conditionné (κ = {cond:.2e} ≥ 10⁶) — solution potentiellement instable")
+                st.error(f"❌ Système mal conditionné (κ = {cond:.2e} ≥ 10⁶)")
 
         with st.expander(T["gj_what_is_cond"], expanded=False):
             st.markdown(T["gj_cond_explain"])
 
-        # ── Status ───────────────────────────────────────────────────
         if status == "no_solution":
             st.error(T["gj_no_solution"])
             st.stop()
         elif status == "infinite":
             st.warning(T["gj_inf_solutions"])
 
-        # ── Detailed steps ───────────────────────────────────────────
-        st.subheader(T["gj_steps"])
-        step_icons = {"swap": "🔄", "normalize": "➗", "eliminate": "➖"}
-        step_colors = {"swap": "#f5a623", "normalize": "#4a90d9", "eliminate": "#2ecc71"}
-
-        for k, step in enumerate(steps):
-            stype = step["type"]
-            icon = step_icons.get(stype, "•")
-            color = step_colors.get(stype, "#aaa")
-            op_label = {
-                "swap": T["gj_swap"],
-                "normalize": T["gj_normalize"],
-                "eliminate": T["gj_eliminate"],
-            }.get(stype, stype)
-
-            with st.expander(
-                f"{icon} **{T['gj_step']} {k+1}** — {op_label} — `{step['desc']}`",
-                expanded=(k < 3)
-            ):
-                col_desc, col_mat = st.columns([1, 2])
-                with col_desc:
-                    st.markdown(f"""
-<div style="padding:0.8rem;background:#0d1b2a;border-radius:8px;border-left:3px solid {color};">
-<span style="color:{color};font-family:IBM Plex Mono;font-size:0.9rem;font-weight:600;">{op_label}</span><br><br>
-<code style="color:#e2e8f0;">{step['desc']}</code><br><br>
-""", unsafe_allow_html=True)
-                    if stype == "normalize":
-                        st.markdown(f"""<code style="color:#aac;">Pivot = {smart_fmt(step.get('pivot_val', 0))}</code>""", unsafe_allow_html=True)
-                    elif stype == "eliminate":
-                        st.markdown(f"""<code style="color:#aac;">Facteur = {smart_fmt(step.get('factor', 0))}</code>""", unsafe_allow_html=True)
-                    st.markdown("</div>", unsafe_allow_html=True)
-
-                with col_mat:
-                    st.markdown(f"**{T['gj_matrix_after']}**")
-                    st.markdown(fmt_matrix(step["matrix"], highlight_col=step.get("col"), n_cols=n_size), unsafe_allow_html=True)
-
-        # ── RREF ────────────────────────────────────────────────────
-        st.subheader(T["gj_rref"])
-        st.markdown(fmt_matrix(rref, n_cols=n_size), unsafe_allow_html=True)
-        st.latex(r"\text{RREF}(A|b) = \begin{pmatrix}1 & 0 & \cdots & 0\\ 0 & 1 & \cdots & 0 \\ \vdots & & \ddots & \vdots \\ 0 & 0 & \cdots & 1\end{pmatrix} \bigg| \begin{pmatrix}x_1\\x_2\\\vdots\\x_n\end{pmatrix}")
-
-        with st.expander(T["gj_what_is_rref"], expanded=False):
-            st.markdown(T["gj_rref_explain"])
-
-        # ── Solution ─────────────────────────────────────────────────
+        # ══════════════════════════════════════════════
+        #  SOLUTION — shown DIRECTLY after clicking solve
+        # ══════════════════════════════════════════════
         fig_sol_obj = None
-        if solution is not None:
-            st.subheader(T["gj_solution"])
-            sol_cols = st.columns(min(n_size, 6))
-            for i, xi in enumerate(solution):
-                sol_cols[i % len(sol_cols)].metric(f"x{i+1}", smart_fmt(xi))
+        residual = None
 
-            # LaTeX solution
+        if solution is not None:
+            st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
+
+            # Solution box
+            sol_html = f'<div class="solution-card"><h3>{T["gj_solution_direct"]}</h3>'
+            sol_html += '<div style="display:flex;flex-wrap:wrap;gap:1rem;">'
+            for i, xi in enumerate(solution):
+                sol_html += (f'<div style="background:#0a2018;border:1px solid #10b981;border-radius:8px;'
+                             f'padding:0.7rem 1.2rem;font-family:IBM Plex Mono;min-width:90px;">'
+                             f'<div style="color:#64748b;font-size:0.7rem;text-transform:uppercase;">x{i+1}</div>'
+                             f'<div style="color:#10b981;font-size:1.25rem;font-weight:700;">{smart_fmt(xi)}</div>'
+                             f'</div>')
+            sol_html += '</div></div>'
+            st.markdown(sol_html, unsafe_allow_html=True)
+
+            # LaTeX
             sol_latex = r"x = \begin{pmatrix}" + r"\\".join(smart_fmt(xi) for xi in solution) + r"\end{pmatrix}"
             st.latex(sol_latex)
 
@@ -1248,12 +1450,13 @@ if st.session_state["page"] == "gj":
             with st.expander(T["gj_what_is_residual"], expanded=False):
                 st.markdown(T["gj_residual_explain"])
 
-            # ── Bar chart of solution ────────────────────────────────
+            # ── Bar chart ────────────────────────────────────────────
             fig_sol, ax_sol = plt.subplots(figsize=(max(6, n_size*1.2), 4))
-            fig_sol.patch.set_facecolor("#0d1b2a")
-            ax_sol.set_facecolor("#0d1b2a")
-            colors = ["#4a90d9" if v >= 0 else "#f5a623" for v in solution]
-            bars = ax_sol.bar([f"x{i+1}" for i in range(n_size)], solution, color=colors, edgecolor="#334", linewidth=1.2)
+            fig_sol.patch.set_facecolor("#070d1a")
+            ax_sol.set_facecolor("#070d1a")
+            colors = ["#06b6d4" if v >= 0 else "#f59e0b" for v in solution]
+            bars = ax_sol.bar([f"x{i+1}" for i in range(n_size)], solution,
+                              color=colors, edgecolor="#1e3a5f", linewidth=1.2)
             y_range = max(abs(solution)) if max(abs(solution)) > 0 else 1
             for bar, val in zip(bars, solution):
                 ax_sol.text(bar.get_x() + bar.get_width()/2,
@@ -1261,46 +1464,89 @@ if st.session_state["page"] == "gj":
                             smart_fmt(val),
                             ha='center', va='bottom', color="#e2e8f0",
                             fontfamily="monospace", fontsize=9)
-            ax_sol.axhline(0, color="#555", linewidth=0.8)
-            ax_sol.set_xlabel("Variables", color="#aac")
-            ax_sol.set_ylabel("Valeur", color="#aac")
-            ax_sol.set_title("Solution x du système Ax = b", color="#e2e8f0", fontfamily="monospace")
-            ax_sol.tick_params(colors="#aac")
+            ax_sol.axhline(0, color="#334155", linewidth=0.8)
+            ax_sol.set_xlabel("Variables", color="#64748b")
+            ax_sol.set_ylabel("Valeur", color="#64748b")
+            ax_sol.set_title("Solution x — Ax = b", color="#94a3b8",
+                             fontfamily="monospace", fontsize=11)
+            ax_sol.tick_params(colors="#64748b")
             for spine in ax_sol.spines.values():
-                spine.set_edgecolor("#334")
-            ax_sol.grid(True, axis='y', linestyle="--", alpha=0.18, color="#4a90d9")
+                spine.set_edgecolor("#1e3a5f")
+            ax_sol.grid(True, axis='y', linestyle="--", alpha=0.15, color="#06b6d4")
             st.pyplot(fig_sol)
             fig_sol_obj = fig_sol
 
-        # ── Summary table ────────────────────────────────────────────
-        st.divider()
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
+
+        # ── Detailed steps ───────────────────────────────────────────
+        st.subheader(T["gj_steps"])
+        step_icons = {"swap": "🔄", "normalize": "➗", "eliminate": "➖"}
+        step_colors = {"swap": "#f59e0b", "normalize": "#06b6d4", "eliminate": "#10b981"}
+
+        for k, step in enumerate(steps):
+            stype = step["type"]
+            icon = step_icons.get(stype, "•")
+            color = step_colors.get(stype, "#94a3b8")
+            op_label = {
+                "swap": T["gj_swap"],
+                "normalize": T["gj_normalize"],
+                "eliminate": T["gj_eliminate"],
+            }.get(stype, stype)
+
+            with st.expander(
+                f"{icon} **{T['gj_step']} {k+1}** — {op_label} — `{step['desc']}`",
+                expanded=(k < 2)
+            ):
+                col_desc, col_mat = st.columns([1, 2])
+                with col_desc:
+                    st.markdown(f"""
+<div style="padding:0.8rem;background:#070d1a;border-radius:8px;border-left:3px solid {color};">
+<span style="color:{color};font-family:IBM Plex Mono;font-size:0.88rem;font-weight:600;">{op_label}</span><br><br>
+<code style="color:#e2e8f0;font-size:0.82rem;">{step['desc']}</code><br><br>
+""", unsafe_allow_html=True)
+                    if stype == "normalize":
+                        st.markdown(f"""<code style="color:#94a3b8;">Pivot = {smart_fmt(step.get('pivot_val', 0))}</code>""", unsafe_allow_html=True)
+                    elif stype == "eliminate":
+                        st.markdown(f"""<code style="color:#94a3b8;">Facteur = {smart_fmt(step.get('factor', 0))}</code>""", unsafe_allow_html=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
+                with col_mat:
+                    st.markdown(f"**{T['gj_matrix_after']}**")
+                    st.markdown(fmt_matrix(step["matrix"], highlight_col=step.get("col"), n_cols=n_size),
+                                unsafe_allow_html=True)
+
+        # ── RREF ────────────────────────────────────────────────────
+        st.subheader(T["gj_rref"])
+        st.markdown(fmt_matrix(rref, n_cols=n_size), unsafe_allow_html=True)
+        st.latex(r"\text{RREF}(A|b) = \begin{pmatrix}1 & 0 & \cdots & 0\\ 0 & 1 & \cdots & 0 \\ \vdots & & \ddots & \vdots \\ 0 & 0 & \cdots & 1\end{pmatrix} \bigg| \begin{pmatrix}x_1\\x_2\\\vdots\\x_n\end{pmatrix}")
+        with st.expander(T["gj_what_is_rref"], expanded=False):
+            st.markdown(T["gj_rref_explain"])
+
+        # ── Summary ──────────────────────────────────────────────────
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
         st.subheader(T["gj_summary"])
         synth = {
-            "Indicateur": [T["gj_rank"], T["gj_det"], T["gj_cond"], "Nombre d'étapes",
-                           T["gj_residual"]],
+            "Indicateur": [T["gj_rank"], T["gj_det"], T["gj_cond"],
+                           "Nombre d'étapes", T["gj_residual"]],
             "Valeur": [
                 f"{rank} / {n_size}",
                 smart_fmt(det) if det is not None else "N/A",
                 f"{cond:.4e}" if cond is not None else "N/A",
                 str(len(steps)),
-                f"{residual:.4e}" if solution is not None else "N/A",
+                f"{residual:.4e}" if residual is not None else "N/A",
             ]
         }
         st.dataframe(pd.DataFrame(synth), use_container_width=True)
 
         # ── Downloads ─────────────────────────────────────────────────
-        st.divider()
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
         st.subheader(T["download_title"])
         dl1, dl2, dl3 = st.columns(3)
-
         txt_gj = make_txt_gj(n_size, A_input, b_input, solution, steps, det, rank, cond)
         dl1.download_button(T["download_txt"], data=txt_gj,
                             file_name="gauss_jordan_report.txt", mime="text/plain")
-
         csv_gj = make_csv_gj(solution, A_input, b_input)
         dl2.download_button(T["download_csv"], data=csv_gj,
                             file_name="gauss_jordan_solution.csv", mime="text/csv")
-
         pdf_gj = make_pdf_gj(n_size, A_input, b_input, solution, steps, det, rank, cond, rref, fig_sol_obj)
         if pdf_gj:
             dl3.download_button(T["download_pdf"], data=pdf_gj,
@@ -1314,9 +1560,25 @@ if st.session_state["page"] == "gj":
 # ═══════════════════════════════════════════════════════════════════════
 elif st.session_state["page"] == "simp":
 
+    # ── Method introduction with integral sign ───────────────────────
+    st.markdown(f"""
+<div class="info-banner">
+    <div style="font-family:IBM Plex Mono;font-size:0.78rem;color:#06b6d4;letter-spacing:0.06em;
+                text-transform:uppercase;margin-bottom:0.5rem;">{T["simp_intro_title"]}</div>
+    <div style="font-size:1.0rem;color:#cbd5e1;">{T["simp_intro_text"]}</div>
+</div>
+""", unsafe_allow_html=True)
+
+    st.latex(r"\int_a^b f(x)\,dx")
+
+    st.markdown(f'<div style="color:#94a3b8;font-size:0.92rem;margin-top:0.3rem;">{T["simp_intro_sub"]}</div>',
+                unsafe_allow_html=True)
+
+    st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
+
+    # ── Sidebar parameters ───────────────────────────────────────────
     with st.sidebar:
         st.subheader(T["params"])
-
         func_option = st.radio(T["function_choice"], [T["predefined"], T["custom"]])
         PRESETS = [
             "x**2", "x**3 - 3*x + 1", "1/x", "sqrt(x)", "abs(x)",
@@ -1349,7 +1611,8 @@ elif st.session_state["page"] == "simp":
             for r_idx, row in enumerate(pad_4cols):
                 cols = st.columns(4)
                 for i, (label, val) in enumerate(row):
-                    cols[i].button(label, on_click=add_sym, args=(val,), use_container_width=True, key=f"num_{r_idx}_{i}_{label}")
+                    cols[i].button(label, on_click=add_sym, args=(val,), use_container_width=True,
+                                   key=f"num_{r_idx}_{i}_{label}")
             pad_3cols = [
                 [('sin','sin('),('cos','cos('),('tan','tan(')],
                 [('exp','exp('),('log','log('),('sqrt','sqrt(')],
@@ -1358,7 +1621,8 @@ elif st.session_state["page"] == "simp":
             for r_idx, row in enumerate(pad_3cols):
                 cols = st.columns(3)
                 for i, (label, val) in enumerate(row):
-                    cols[i].button(label, on_click=add_sym, args=(val,), use_container_width=True, key=f"func_{r_idx}_{i}_{label}")
+                    cols[i].button(label, on_click=add_sym, args=(val,), use_container_width=True,
+                                   key=f"func_{r_idx}_{i}_{label}")
             c1, c2 = st.columns(2)
             c1.button("⌫", on_click=del_last, use_container_width=True, key="btn_del")
             c2.button("C", on_click=clear_func, use_container_width=True, key="btn_clear")
@@ -1380,7 +1644,6 @@ elif st.session_state["page"] == "simp":
         show_table    = st.checkbox(T["show_table"], value=False)
         compare_exact = st.checkbox(T["compare_exact"], value=True)
         show_conv     = st.checkbox(T["convergence"], value=False)
-
         st.divider()
         run = st.button(T["calculate"], type="primary", use_container_width=True)
 
@@ -1412,6 +1675,21 @@ elif st.session_state["page"] == "simp":
             st.error(f"{T['error_calc']} : {e}")
             st.stop()
 
+        h_val = (b - a) / n
+
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
+
+        # ── Calculation parameters display (before result) ────────────
+        st.subheader(T["simp_params_display"])
+        pm1, pm2, pm3, pm4 = st.columns(4)
+        pm1.metric("a", smart_fmt(a))
+        pm2.metric("b", smart_fmt(b))
+        pm3.metric("n", str(n))
+        pm4.metric(T["simp_h_label"], f"{h_val:.6f}")
+
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
+
+        # ── Results ───────────────────────────────────────────────────
         st.subheader(T["results"])
         c1, c2, c3, c4 = st.columns(4)
         c1.metric(T["numerical_result"], f"{result:.10f}")
@@ -1422,55 +1700,75 @@ elif st.session_state["page"] == "simp":
             c3.metric(T["abs_error"], f"{abs_err:.3e}")
             c4.metric(T["rel_error"], f"{rel_err:.3e}")
 
+        # ── Error & Convergence explanation buttons ───────────────────
+        exp_col1, exp_col2, exp_col3 = st.columns(3)
+        with exp_col1:
+            with st.expander(T["btn_abs_error"], expanded=False):
+                st.markdown(T["explain_abs_error"])
+        with exp_col2:
+            with st.expander(T["btn_rel_error"], expanded=False):
+                st.markdown(T["explain_rel_error"])
+        with exp_col3:
+            with st.expander(T["btn_convergence"], expanded=False):
+                st.markdown(T["explain_convergence"])
+
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
+
         if show_plot:
-            fig, ax = plt.subplots(figsize=(11, 4.5))
-            fig.patch.set_facecolor("#0d1b2a")
-            ax.set_facecolor("#0d1b2a")
+            fig_plot, ax = plt.subplots(figsize=(11, 4.5))
+            fig_plot.patch.set_facecolor("#070d1a")
+            ax.set_facecolor("#070d1a")
             x_fine = np.linspace(a, b, 600)
             y_fine = evaluate(func_str, x_fine)
-            ax.plot(x_fine, y_fine, color="#4a90d9", linewidth=2.2, label=f"f(x) = {func_str}", zorder=4)
-            ax.fill_between(x_fine, y_fine, alpha=0.15, color="#4a90d9")
+            ax.plot(x_fine, y_fine, color="#06b6d4", linewidth=2.2,
+                    label=f"f(x) = {func_str}", zorder=4)
+            ax.fill_between(x_fine, y_fine, alpha=0.1, color="#06b6d4")
             for i in range(len(x_vals) - 1):
-                ax.fill_between([x_vals[i], x_vals[i+1]], [y_vals[i], y_vals[i+1]], alpha=0.35,
-                                color="#f5a623", zorder=2)
-                ax.plot([x_vals[i], x_vals[i]], [0, y_vals[i]], color="#f5a623", linewidth=0.7,
-                        linestyle="--", zorder=3)
-            ax.plot(x_vals, y_vals, 'o', color="#f5a623", markersize=5, label="Simpson 1/3", zorder=5)
-            ax.axhline(0, color="#555", linewidth=0.8)
-            ax.set_xlabel("x", color="#aac")
-            ax.set_ylabel("f(x)", color="#aac")
-            ax.set_title(f"∫ f(x) dx ≈ {result:.8f}", color="#e2e8f0", fontfamily="monospace", fontsize=12)
-            ax.tick_params(colors="#aac")
+                ax.fill_between([x_vals[i], x_vals[i+1]], [y_vals[i], y_vals[i+1]],
+                                alpha=0.35, color="#f59e0b", zorder=2)
+                ax.plot([x_vals[i], x_vals[i]], [0, y_vals[i]], color="#f59e0b",
+                        linewidth=0.7, linestyle="--", zorder=3)
+            ax.plot(x_vals, y_vals, 'o', color="#f59e0b", markersize=5,
+                    label="Simpson 1/3", zorder=5)
+            ax.axhline(0, color="#334155", linewidth=0.8)
+            ax.set_xlabel("x", color="#64748b")
+            ax.set_ylabel("f(x)", color="#64748b")
+            ax.set_title(f"∫ f(x) dx ≈ {result:.8f}", color="#94a3b8",
+                         fontfamily="monospace", fontsize=12)
+            ax.tick_params(colors="#64748b")
             for spine in ax.spines.values():
-                spine.set_edgecolor("#334")
-            ax.legend(facecolor="#0d1b2a", labelcolor="#e2e8f0", fontsize=9)
-            ax.grid(True, linestyle="--", alpha=0.18, color="#4a90d9")
-            st.pyplot(fig)
+                spine.set_edgecolor("#1e3a5f")
+            ax.legend(facecolor="#070d1a", labelcolor="#e2e8f0", fontsize=9,
+                      edgecolor="#1e3a5f")
+            ax.grid(True, linestyle="--", alpha=0.15, color="#06b6d4")
+            st.pyplot(fig_plot)
+            fig = fig_plot
 
         if show_conv and exact_val is not None:
             ns_c, errs_c = convergence_data(func_str, a, b, exact_val)
             fig_c, ax_c = plt.subplots(figsize=(9, 3.5))
-            fig_c.patch.set_facecolor("#0d1b2a")
-            ax_c.set_facecolor("#0d1b2a")
+            fig_c.patch.set_facecolor("#070d1a")
+            ax_c.set_facecolor("#070d1a")
             valid = [(n2, e) for n2, e in zip(ns_c, errs_c) if e > 0 and not np.isnan(e)]
             if valid:
                 ns_v, es_v = zip(*valid)
-                ax_c.loglog(ns_v, es_v, 'o-', color="#4ef0c4", linewidth=2, markersize=4)
-            ax_c.set_xlabel(T["conv_n"], color="#aac")
-            ax_c.set_ylabel(T["conv_err"], color="#aac")
-            ax_c.set_title(T["conv_title"], color="#e2e8f0", fontfamily="monospace")
-            ax_c.tick_params(colors="#aac")
+                ax_c.loglog(ns_v, es_v, 'o-', color="#10b981", linewidth=2, markersize=4)
+            ax_c.set_xlabel(T["conv_n"], color="#64748b")
+            ax_c.set_ylabel(T["conv_err"], color="#64748b")
+            ax_c.set_title(T["conv_title"], color="#94a3b8", fontfamily="monospace")
+            ax_c.tick_params(colors="#64748b")
             for spine in ax_c.spines.values():
-                spine.set_edgecolor("#334")
-            ax_c.grid(True, linestyle="--", alpha=0.2, color="#4ef0c4")
+                spine.set_edgecolor("#1e3a5f")
+            ax_c.grid(True, linestyle="--", alpha=0.15, color="#10b981")
             st.pyplot(fig_c)
 
         if show_table:
             st.subheader(T["eval_points"])
             df = pd.DataFrame({"i": range(len(x_vals)), "x_i": x_vals, "f(x_i)": y_vals})
-            st.dataframe(df.style.format({"x_i": "{:.8f}", "f(x_i)": "{:.8f}"}), use_container_width=True)
+            st.dataframe(df.style.format({"x_i": "{:.8f}", "f(x_i)": "{:.8f}"}),
+                         use_container_width=True)
 
-        st.divider()
+        st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
         st.subheader(T["download_title"])
         dl1, dl2, dl3 = st.columns(3)
         txt_bytes = make_txt_simp(func_str, a, b, n, result, exact_val, x_vals, y_vals)
@@ -1486,16 +1784,14 @@ elif st.session_state["page"] == "simp":
         else:
             dl3.info("PDF: `pip install fpdf2`")
 
-    st.divider()
+    st.markdown('<div class="divider-accent"></div>', unsafe_allow_html=True)
     with st.expander(T["about_title"], expanded=False):
         st.markdown(T["about_simp"])
         st.markdown("""
 ---
-**Complexité / Complexity:**
-
 | Méthode | Ordre erreur | Contrainte |
 |---------|-------------|-----------|
 | Simpson 1/3 | O(h⁴) | n pair |
 
-> **Astuce:** Simpson 1/3 nécessite ~10× moins de sous-intervalles que les trapèzes pour la même précision.
+> **Astuce :** Simpson 1/3 nécessite ~10× moins de sous-intervalles que les trapèzes pour la même précision.
         """)
